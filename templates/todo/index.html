@@ -32,6 +32,33 @@
           </form>
     </div>
   </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>SNo.</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Action</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for todo in todos  %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{todo.title}}</td>
+          <td>{{ todo.description }}</td>
+          <td>
+            {%if todo.completed%}
+            <span class="badge badge-success">Completed</span>
+            {%else%}
+            <a class="btn btn-sm btn-dark" href="{% url 'complete_todo' todo.id %}">Completed</a>
+            {%endif%}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      </table>
 </div>
 
 </body>
