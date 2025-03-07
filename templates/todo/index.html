@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="{{ theme }}">
 <head>
   <title>My Todo</title>
   <meta charset="utf-8">
@@ -8,30 +8,145 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+
+  /* Light Theme (Default) */
+  [data-bs-theme="light"] {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  [data-bs-theme="light"] body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  [data-bs-theme="light"] .table {
+    color: #000000;
+  }
+
+  [data-bs-theme="light"] .table thead th {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+  }
+
+  [data-bs-theme="light"] .table tbody tr {
+    background-color: #ffffff;
+  }
+
+  [data-bs-theme="light"] .table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  [data-bs-theme="light"] .form-control {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ced4da;
+  }
+
+  [data-bs-theme="light"] .form-control:focus {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #80bdff;
+  }
+
+  [data-bs-theme="light"] .btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+  }
+
+  [data-bs-theme="light"] .btn-dark:hover {
+    background-color: #454d55;
+    border-color: #454d55;
+  }
+
+  /* Dark Theme */
+  [data-bs-theme="dark"] {
+    background-color: #121212;
+    color: #ffffff;
+  }
+
+  [data-bs-theme="dark"] body {
+    background-color: #000000; /* Full black background */
+    color: #ffffff;
+  }
+
+  [data-bs-theme="dark"] .table {
+    color: #ffffff;
+  }
+
+  [data-bs-theme="dark"] .table thead th {
+    background-color: #343a40;
+    border-color: #454d55;
+  }
+
+  [data-bs-theme="dark"] .table tbody tr {
+    background-color: #1e1e1e;
+  }
+
+  [data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: #2c2c2c;
+  }
+
+  [data-bs-theme="dark"] .form-control {
+    background-color: #333333;
+    color: #ffffff;
+    border-color: #555555;
+  }
+
+  [data-bs-theme="dark"] .form-control:focus {
+    background-color: #444444;
+    color: #ffffff;
+    border-color: #777777;
+  }
+
+  [data-bs-theme="dark"] .btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+  }
+
+  [data-bs-theme="dark"] .btn-dark:hover {
+    background-color: #454d55;
+    border-color: #454d55;
+  }
+</style>
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-sm-7">
-        <form action="{% url 'create_todo' %}" method="POST">
-            {% csrf_token %}
-            <!-- Title Field -->
-            <div class="form-group">
-              <label for="title">TITLE</label>
-              <input type="text" class="form-control" id="title" placeholder="Enter title" name="title">
-            </div>
-
-            <!-- Description Field -->
-            <div class="form-group">
-              <label for="description">DESCRIPTION</label>
-              <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter description"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-dark">Submit</button>
-          </form>
+  <div class="container">
+    <!-- Theme Toggle Form -->
+    <div class="text-right mt-3">
+      <form action="{% url 'set_theme' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="theme" value="{% if theme == 'light' %}dark{% else %}light{% endif %}">
+        <button type="submit" class="btn btn-secondary">
+          {% if theme == 'light' %}Dark Mode{% else %}Light Mode{% endif %}
+        </button>
+      </form>
     </div>
-  </div>
+
+    <div class="row justify-content-center">
+      <div class="col-sm-7">
+        <form action="{% url 'create_todo' %}" method="POST">
+          {% csrf_token %}
+          <!-- Title Field -->
+          <div class="form-group">
+            <label for="title">TITLE</label>
+            <input type="text" class="form-control" id="title" placeholder="Enter title" name="title">
+          </div>
+
+          <!-- Description Field -->
+          <div class="form-group">
+            <label for="description">DESCRIPTION</label>
+            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter description"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-dark">Submit</button>
+        </form>
+      </div>
+    </div>
+
     <table class="table">
       <thead>
         <tr>
@@ -39,30 +154,27 @@
           <th>Title</th>
           <th>Description</th>
           <th>Action</th>
-
         </tr>
       </thead>
       <tbody>
         {% for todo in todos  %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td>{{todo.title}}</td>
+          <td>{{ todo.title }}</td>
           <td>{{ todo.description }}</td>
           <td>
-            {%if todo.completed%}
-            <span class="badge badge-success">Completed</span>
-            {%else%}
-            <a class="btn btn-sm btn-dark" href="{% url 'complete_todo' todo.id %}">Completed</a>
-            {%endif%}
+            {% if todo.completed %}
+              <span class="badge badge-success">Completed</span>
+            {% else %}
+              <a class="btn btn-sm btn-dark" href="{% url 'complete_todo' todo.id %}">Completed</a>
+            {% endif %}
             <a class="btn btn-sm btn-danger" href="{% url 'delete_todo' todo.id %}">Delete</a>
-
-
           </td>
         </tr>
         {% endfor %}
       </tbody>
-      </table>
-</div>
+    </table>
+  </div>
 
 </body>
 </html>
